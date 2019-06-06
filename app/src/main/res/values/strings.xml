@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TestTask</string>
+    <string name="qrhistory">QR Histroy</string>
+    <string name="qrscan">QR Scan</string>
+</resources>

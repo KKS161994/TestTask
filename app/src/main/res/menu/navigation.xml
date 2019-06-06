@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_shop"
+        android:icon="@drawable/ic_store_white_24dp"
+        android:title="@string/qrscan" />
+
+    <item
+        android:id="@+id/navigation_qr_history"
+        android:icon="@drawable/ic_card_giftcard_white_24dp"
+        android:title="@string/qrhistory" />
+
+
+
+</menu>
