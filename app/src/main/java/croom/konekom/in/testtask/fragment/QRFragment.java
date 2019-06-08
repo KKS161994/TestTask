@@ -29,10 +29,11 @@ public class QRFragment extends Fragment implements View.OnClickListener {
     private ArrayList<BarcodeFormat> barcodeFormats;
     private AppDatabase appDatabase;
     private QREntry qrEntry;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView =  inflater.inflate(R.layout.qrscan, container, false);
+        View rootView = inflater.inflate(R.layout.qrscan, container, false);
         CodeScannerView scannerView = rootView.findViewById(R.id.scanner_view);
 
         mCodeScanner = new CodeScanner(getActivity(), scannerView);
@@ -82,7 +83,7 @@ public class QRFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.fab:
                 mCodeScanner.startPreview();
                 fab.hide();

@@ -25,21 +25,30 @@ public class QRHistory extends Fragment {
     private final static String TAG = QRHistory.class.getSimpleName();
     private List<QREntry> qrEntries;
     private QRItemsAdapter qrItemsAdapter;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView =  inflater.inflate(R.layout.qrhistory, container, false);
+        View rootView = inflater.inflate(R.layout.qrhistory, container, false);
         appDatabase = AppDatabase.getInstance(getActivity());
         qrEntries = new ArrayList<>();
         qrEntries = appDatabase.userDao().getAll();
+
         recyclerView = rootView.findViewById(R.id.qrHistory);
-        Log.d(TAG,appDatabase.userDao().getAll().size()+"");
-        setAdapter();
+        if(qrEntries.size()==0||qrEntries==null){
+            rootView.findViewById(R.id.noContent).setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }
+        else{
+            rootView.findViewById(R.id.noContent).setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            setAdapter();
+        }
         return rootView;
     }
 
     private void setAdapter() {
-        qrItemsAdapter = new QRItemsAdapter(getActivity(),qrEntries);
+        qrItemsAdapter = new QRItemsAdapter(getActivity(), qrEntries);
         recyclerView.setAdapter(qrItemsAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }

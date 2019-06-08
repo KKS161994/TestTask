@@ -27,7 +27,6 @@ public class QRItemsAdapter extends RecyclerView.Adapter<QRItemsAdapter.ViewHold
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        Context context = viewGroup.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         // Inflate the custom layout
@@ -41,16 +40,15 @@ public class QRItemsAdapter extends RecyclerView.Adapter<QRItemsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        if(i==0){
+        if (i == 0) {
             viewHolder.qrData.setText("Data");
             viewHolder.qrData.setTypeface(null, Typeface.BOLD);
             viewHolder.qrTimeStamp.setText("Time");
             viewHolder.qrTimeStamp.setTypeface(null, Typeface.BOLD);
-        }
-        else{
-        QREntry qrEntry = qrEntries.get(i-1);
-        viewHolder.qrData.setText(qrEntry.getData());
-        viewHolder.qrTimeStamp.setText(convertTimestamp(qrEntry.getTimestamp()));
+        } else {
+            QREntry qrEntry = qrEntries.get(i - 1);
+            viewHolder.qrData.setText(qrEntry.getData());
+            viewHolder.qrTimeStamp.setText(convertTimestamp(qrEntry.getTimestamp()));
             viewHolder.qrData.setTypeface(null, Typeface.NORMAL);
             viewHolder.qrTimeStamp.setTypeface(null, Typeface.NORMAL);
         }
@@ -58,14 +56,14 @@ public class QRItemsAdapter extends RecyclerView.Adapter<QRItemsAdapter.ViewHold
 
     public String convertTimestamp(Long timestamp) {
 
-        String value = new java.text.SimpleDateFormat("hh:mm:ss     dd/MM/yyyy").
+        String value = new java.text.SimpleDateFormat("hh:mm:ss  a   dd/MM/yyyy").
                 format(new java.util.Date(timestamp * 1000));
         return value;
     }
 
     @Override
     public int getItemCount() {
-        return qrEntries.size();
+        return qrEntries.size() + 1;
     }
 
     // Provide a direct reference to each of the views within a data item

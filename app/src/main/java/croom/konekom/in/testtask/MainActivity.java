@@ -29,11 +29,11 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private ActionBar toolbar;
-    private int requestCode = 1;
     String visibleFragment = "qrscan";
     Fragment fragment;
     private ApiInterface apiInterface;
-    private String TAG=MainActivity.class.getSimpleName();
+    private String TAG = MainActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,28 +49,34 @@ public class MainActivity extends AppCompatActivity {
         layoutParams.setBehavior(new BottomNavigationBehavior());
 
         // load the store fragment by default
-        if(null==savedInstanceState){
-        toolbar.setTitle("Shop");
-        loadFragment(new QRFragment());}
+        if (null == savedInstanceState) {
+            toolbar.setTitle("QR Scan");
+            loadFragment(new QRFragment());
+        }
+        /***
+         * Uncomment the below to make retrofit api call
+         *
+         */
+
         //loadInternetData();
 
     }
 
     private void loadInternetData() {
-    apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        apiInterface = ApiClient.getClient().create(ApiInterface.class);
         Call<List<Photo>> getPhotos = apiInterface.getAllPhotos();
-        Log.d(TAG,"Api call");
+        Log.d(TAG, "Api call");
 
         getPhotos.enqueue(new Callback<List<Photo>>() {
             @Override
             public void onResponse(Call<List<Photo>> call, Response<List<Photo>> response) {
-                Toast.makeText(MainActivity.this,response.code()+" "+response.body().size(),Toast.LENGTH_SHORT).show();
-                Log.d(TAG,"Api call success");
+                Toast.makeText(MainActivity.this, response.code() + " " + response.body().size(), Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Api call success");
             }
 
             @Override
             public void onFailure(Call<List<Photo>> call, Throwable t) {
-                Log.d(TAG,"Api call fail");
+                Log.d(TAG, "Api call fail");
             }
         });
     }
@@ -88,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new QRFragment();
 
 
-                    if(!visibleFragment.equalsIgnoreCase("qrscan")){
+                    if (!visibleFragment.equalsIgnoreCase("qrscan")) {
                         visibleFragment = "qrscan";
                         loadFragment(fragment);
                     }
@@ -100,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
                     fragment = new QRHistory();
 
-                    if(!visibleFragment.equalsIgnoreCase("qrhistory")){
+                    if (!visibleFragment.equalsIgnoreCase("qrhistory")) {
                         visibleFragment = "qrhistory";
                         loadFragment(fragment);
                     }
@@ -111,15 +117,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
-//    public static boolean isFragmentVisible(Fragment fragment) {
-//        MyFragmentClass test = (MyFragmentClass) getSupportFragmentManager().findFragmentByTag("testID");
-//        if (test != null && test.isVisible()) {
-//            //DO STUFF
-//        }
-//        else {
-//            //Whatever
-//        }
-//    }
+
     /**
      * loading fragment into FrameLayout
      *
@@ -140,6 +138,6 @@ public class MainActivity extends AppCompatActivity {
             fm.popBackStack();
         }
 
-finish();
+        finish();
     }
 }
