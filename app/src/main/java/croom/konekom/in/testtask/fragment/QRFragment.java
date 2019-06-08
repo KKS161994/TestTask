@@ -17,19 +17,26 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import croom.konekom.in.testtask.R;
+import croom.konekom.in.testtask.database.AppDatabase;
+import croom.konekom.in.testtask.database.QREntry;
 
 public class QRFragment extends Fragment implements View.OnClickListener {
     private CodeScanner mCodeScanner;
     public FloatingActionButton fab;
     private ArrayList<BarcodeFormat> barcodeFormats;
+    private AppDatabase appDatabase;
+    private QREntry qrEntry;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView =  inflater.inflate(R.layout.qrscan, container, false);
         CodeScannerView scannerView = rootView.findViewById(R.id.scanner_view);
+
         mCodeScanner = new CodeScanner(getActivity(), scannerView);
+        appDatabase = AppDatabase.getInstance(getActivity());
         barcodeFormats = new ArrayList<>();
         barcodeFormats.add(BarcodeFormat.QR_CODE);
         mCodeScanner.setFormats(barcodeFormats);
@@ -43,6 +50,10 @@ public class QRFragment extends Fragment implements View.OnClickListener {
                     public void run() {
                         Toast.makeText(getActivity(), result.getText(), Toast.LENGTH_SHORT).show();
                         fab.show();
+                        qrEntry = new QREntry();
+                        qrEntry.setTimestamp(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
+                        qrEntry.setData(result.getText());
+                        appDatabase.userDao().insert(qrEntry);
                     }
                 });
             }

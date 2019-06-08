@@ -14,5 +14,21 @@ public class QREntry {
     public String data;
 
     @ColumnInfo(name = "timestamp")
-    public int timestamp;
+    public long timestamp;
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public String getData() {
+        return data;
+    }
 }

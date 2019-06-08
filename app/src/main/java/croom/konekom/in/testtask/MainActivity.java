@@ -1,32 +1,39 @@
 package croom.konekom.in.testtask;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.os.Build;
+
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.List;
+
 import croom.konekom.in.testtask.fragment.QRFragment;
 import croom.konekom.in.testtask.fragment.QRHistory;
 import croom.konekom.in.testtask.helper.BottomNavigationBehavior;
+import croom.konekom.in.testtask.model.Photo;
+import croom.konekom.in.testtask.rest.ApiClient;
+import croom.konekom.in.testtask.rest.ApiInterface;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActionBar toolbar;
     private int requestCode = 1;
     String visibleFragment = "qrscan";
-
+    Fragment fragment;
+    private ApiInterface apiInterface;
+    private String TAG=MainActivity.class.getSimpleName();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,45 +49,45 @@ public class MainActivity extends AppCompatActivity {
         layoutParams.setBehavior(new BottomNavigationBehavior());
 
         // load the store fragment by default
+        if(null==savedInstanceState){
         toolbar.setTitle("Shop");
-        loadFragment(new QRFragment());
+        loadFragment(new QRFragment());}
+        //loadInternetData();
 
     }
-    private void checkAndRequestPermissions() {
-        int camera = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA);
-        if (camera != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, requestCode);
 
-        }
+    private void loadInternetData() {
+    apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        Call<List<Photo>> getPhotos = apiInterface.getAllPhotos();
+        Log.d(TAG,"Api call");
+
+        getPhotos.enqueue(new Callback<List<Photo>>() {
+            @Override
+            public void onResponse(Call<List<Photo>> call, Response<List<Photo>> response) {
+                Toast.makeText(MainActivity.this,response.code()+" "+response.body().size(),Toast.LENGTH_SHORT).show();
+                Log.d(TAG,"Api call success");
+            }
+
+            @Override
+            public void onFailure(Call<List<Photo>> call, Throwable t) {
+                Log.d(TAG,"Api call fail");
+            }
+        });
     }
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        Log.d("in fragment on request", "Permission callback called-------");
 
-          if((this.requestCode) == requestCode){
 
-              if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                  Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
-
-              } else {
-                    checkAndRequestPermissions();
-                  Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
-
-              }
-          }
-        }
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment fragment;
+
             switch (item.getItemId()) {
                 case R.id.navigation_shop:
                     toolbar.setTitle("QR Scan");
                     fragment = new QRFragment();
+
+
                     if(!visibleFragment.equalsIgnoreCase("qrscan")){
                         visibleFragment = "qrscan";
                         loadFragment(fragment);
@@ -90,7 +97,9 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_qr_history:
                     toolbar.setTitle("QR History");
 
+
                     fragment = new QRHistory();
+
                     if(!visibleFragment.equalsIgnoreCase("qrhistory")){
                         visibleFragment = "qrhistory";
                         loadFragment(fragment);
@@ -102,7 +111,15 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
-
+//    public static boolean isFragmentVisible(Fragment fragment) {
+//        MyFragmentClass test = (MyFragmentClass) getSupportFragmentManager().findFragmentByTag("testID");
+//        if (test != null && test.isVisible()) {
+//            //DO STUFF
+//        }
+//        else {
+//            //Whatever
+//        }
+//    }
     /**
      * loading fragment into FrameLayout
      *
@@ -116,4 +133,13 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+    @Override
+    public void onBackPressed() {
+        FragmentManager fm = getSupportFragmentManager();
+        for (int i = 0; i < fm.getBackStackEntryCount() - 1; i++) {
+            fm.popBackStack();
+        }
+
+finish();
+    }
 }
